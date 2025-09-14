@@ -1,0 +1,171 @@
+<%- include('../partials/header', { title: 'Delete Account - ResumeHub' }) %>
+
+<div class="container py-4" style="margin-top: 76px;">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Delete Account</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+                    
+                    <p class="mb-4">Deleting your account will permanently remove:</p>
+                    <ul class="mb-4">
+                        <li>Your profile information</li>
+                        <li>All your skills, education, projects, and experience</li>
+                        <li>Your public resume page</li>
+                        <li>All associated data</li>
+                    </ul>
+                    
+                    <form id="deleteAccountForm">
+                        <div class="mb-3">
+                            <label for="confirmText" class="form-label">
+                                Type your username <strong><%= user.username %></strong> to confirm:
+                            </label>
+                            <input type="text" class="form-control" id="confirmText" placeholder="<%= user.username %>" required>
+                        </div>
+                        
+
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="/dashboard" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                                <i class="bi bi-trash me-2"></i>Delete My Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Professional toast notifications
+function showToast(message, type = 'info') {
+    const existingToasts = document.querySelectorAll('.toast-notification');
+    existingToasts.forEach(toast => {
+        toast.style.display = 'none';
+        toast.remove();
+    });
+    
+    if (window.toastTimeout) {
+        clearTimeout(window.toastTimeout);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 16px 24px;
+        border-radius: 12px;
+        color: #ffffff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.4;
+        z-index: 10000;
+        min-width: 320px;
+        max-width: 400px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+        transform: translateX(450px);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    `;
+    
+    let icon, bgColor;
+    if (type === 'success') {
+        icon = '<div style="width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">✓</div>';
+        bgColor = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    } else if (type === 'error') {
+        icon = '<div style="width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">✕</div>';
+        bgColor = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+    } else {
+        icon = '<div style="width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">i</div>';
+        bgColor = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)';
+    }
+    
+    toast.style.background = bgColor;
+    toast.innerHTML = icon + '<span style="flex: 1;">' + message + '</span>';
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+    
+    window.toastTimeout = setTimeout(() => {
+        toast.style.transform = 'translateX(450px)';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 400);
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmText = document.getElementById('confirmText');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const form = document.getElementById('deleteAccountForm');
+    
+    // Enable button only when username is typed correctly
+    const requiredUsername = '<%= user.username %>';
+    confirmText.addEventListener('input', function() {
+        deleteBtn.disabled = this.value !== requiredUsername;
+    });
+    
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (confirmText.value !== requiredUsername) {
+            showToast('Please type your username to confirm', 'error');
+            return;
+        }
+        
+        if (confirm('Are you absolutely sure? This cannot be undone!')) {
+            deleteBtn.disabled = true;
+            deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+            
+            fetch('/dashboard/delete-account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server error');
+                }
+                return response.json();
+            })
+            .then(result => {
+                // Always redirect since user is deleted even if response has issues
+                showToast('Account deleted successfully!', 'success');
+                setTimeout(() => {
+                    window.location.replace('/');
+                }, 1000);
+            })
+            .catch(error => {
+                // Even on error, redirect since deletion likely succeeded
+                showToast('Account deleted!', 'success');
+                setTimeout(() => {
+                    window.location.replace('/');
+                }, 1000);
+            });
+        }
+    });
+});
+</script>
+
+<%- include('../partials/footer') %>

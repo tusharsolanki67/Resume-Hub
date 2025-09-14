@@ -1,0 +1,263 @@
+<%- include('../partials/header', { title: 'Dashboard - ResumeHub' }) %>
+
+<div class="container py-4" style="margin-top: 76px;">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="fw-bold mb-1">Dashboard</h1>
+                    <p class="text-muted mb-0">Manage your professional resume</p>
+                </div>
+                <div>
+                    <a href="/resume/<%= user.username %>" class="btn btn-outline-primary">
+                        <i class="bi bi-eye me-2"></i>Preview Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold"><%= skills.length %></h4>
+                            <p class="mb-0">Skills</p>
+                        </div>
+                        <i class="bi bi-gear-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold"><%= projects.length %></h4>
+                            <p class="mb-0">Projects</p>
+                        </div>
+                        <i class="bi bi-code-square fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold"><%= education.length %></h4>
+                            <p class="mb-0">Education</p>
+                        </div>
+                        <i class="bi bi-mortarboard-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4 class="fw-bold"><%= experience.length %></h4>
+                            <p class="mb-0">Experience</p>
+                        </div>
+                        <i class="bi bi-briefcase-fill fs-1 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skills Section -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-gear me-2"></i>Skills</h5>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#skillModal">
+                <i class="bi bi-plus"></i> Add Skill
+            </button>
+        </div>
+        <div class="card-body">
+            <% if (skills.length === 0) { %>
+                <p class="text-muted text-center py-3">No skills added yet. Add your first skill!</p>
+            <% } else { %>
+                <div class="row g-2">
+                    <% skills.forEach(skill => { %>
+                        <div class="col-auto">
+                            <div class="badge bg-secondary fs-6 position-relative skill-badge d-flex align-items-center" data-skill-id="<%= skill._id %>">
+                                <span onclick="editSkill('<%= skill._id %>', this)" 
+                                      style="cursor: pointer;" 
+                                      title="Click to edit"
+                                      data-name="<%= skill.name %>"
+                                      data-category="<%= skill.category %>"
+                                      data-proficiency="<%= skill.proficiency %>">
+                                    <%= skill.name %>
+                                </span>
+                                <button class="btn-close btn-close-white ms-2" style="font-size: 0.6em;" onclick="deleteItem('<%= skill._id %>', 'skills')" title="Delete skill"></button>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-code-square me-2"></i>Projects</h5>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">
+                <i class="bi bi-plus"></i> Add Project
+            </button>
+        </div>
+        <div class="card-body">
+            <% if (projects.length === 0) { %>
+                <p class="text-muted text-center py-3">No projects added yet. Showcase your work!</p>
+            <% } else { %>
+                <div class="row g-3">
+                    <% projects.forEach(project => { %>
+                        <div class="col-md-6">
+                            <div class="card h-100 border">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="fw-bold mb-0"><%= project.title %></h6>
+                                        <div class="dropdown dropstart">
+                                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#" 
+                                                       onclick="editProject('<%= project._id %>', this)"
+                                                       data-title="<%= project.title %>"
+                                                       data-description="<%= project.description %>"
+                                                       data-technologies="<%= project.technologies.join(', ') %>"
+                                                       data-github="<%= project.githubUrl || '' %>"
+                                                       data-live="<%= project.liveUrl || '' %>">Edit</a></li>
+                                                <li><a class="dropdown-item text-danger" href="#" onclick="deleteItem('<%= project._id %>', 'projects')">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <p class="text-muted small mb-2"><%= project.description.substring(0, 100) %>...</p>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <% project.technologies.forEach(tech => { %>
+                                            <span class="badge bg-light text-dark"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Education & Experience Row -->
+    <div class="row g-4">
+        <!-- Education -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-mortarboard me-2"></i>Education</h5>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#educationModal">
+                        <i class="bi bi-plus"></i> Add
+                    </button>
+                </div>
+                <div class="card-body">
+                    <% if (education.length === 0) { %>
+                        <p class="text-muted text-center py-3">No education added yet.</p>
+                    <% } else { %>
+                        <% education.forEach(edu => { %>
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><%= edu.degree %></h6>
+                                        <p class="text-muted mb-1"><%= edu.institution %></p>
+                                        <small class="text-muted"><%= edu.startYear %> - <%= edu.endYear || 'Present' %></small>
+                                    </div>
+                                    <div class="dropdown dropstart">
+                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" 
+                                                   onclick="editEducation('<%= edu._id %>', this)"
+                                                   data-institution="<%= edu.institution %>"
+                                                   data-degree="<%= edu.degree %>"
+                                                   data-field="<%= edu.fieldOfStudy || '' %>"
+                                                   data-start-year="<%= edu.startYear %>"
+                                                   data-end-year="<%= edu.endYear || '' %>"
+                                                   data-grade="<%= edu.grade || '' %>"
+                                                   data-description="<%= edu.description || '' %>">Edit</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteItem('<%= edu._id %>', 'education')">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Experience -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-briefcase me-2"></i>Experience</h5>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#experienceModal">
+                        <i class="bi bi-plus"></i> Add
+                    </button>
+                </div>
+                <div class="card-body">
+                    <% if (experience.length === 0) { %>
+                        <p class="text-muted text-center py-3">No experience added yet.</p>
+                    <% } else { %>
+                        <% experience.forEach(exp => { %>
+                            <div class="border-bottom pb-3 mb-3">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1"><%= exp.position %></h6>
+                                        <p class="text-muted mb-1"><%= exp.company %></p>
+                                        <small class="text-muted">
+                                            <%= new Date(exp.startDate).getFullYear() %> - 
+                                            <%= exp.current ? 'Present' : new Date(exp.endDate).getFullYear() %>
+                                        </small>
+                                    </div>
+                                    <div class="dropdown dropstart">
+                                        <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" 
+                                                   onclick="editExperience('<%= exp._id %>', this)"
+                                                   data-company="<%= exp.company %>"
+                                                   data-position="<%= exp.position %>"
+                                                   data-location="<%= exp.location || '' %>"
+                                                   data-start-date="<%= exp.startDate.toISOString().split('T')[0] %>"
+                                                   data-end-date="<%= exp.endDate ? exp.endDate.toISOString().split('T')[0] : '' %>"
+                                                   data-current="<%= exp.current %>"
+                                                   data-description="<%= exp.description || '' %>"
+                                                   data-responsibilities="<%= exp.responsibilities.join('\n') %>">Edit</a></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deleteItem('<%= exp._id %>', 'experience')">Delete</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<%- include('modals') %>
+
+<%- include('../partials/footer') %>

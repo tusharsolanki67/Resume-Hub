@@ -1,0 +1,270 @@
+<%- include('../partials/header', { title: portfolioUser.fullName + ' - ResumeHub' }) %>
+
+<div class="portfolio-container">
+    <!-- Hero Section -->
+    <section class="py-5" style="margin-top: 76px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+                        <!-- Profile Header -->
+                        <div class="bg-primary text-white p-5">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <% if (portfolioUser.profilePic && portfolioUser.profilePic !== '/images/default-avatar.svg') { %>
+                                        <img src="<%= portfolioUser.profilePic %>"
+                                    <% } else { %>
+                                        <div class="rounded-circle border border-4 border-white shadow d-flex align-items-center justify-content-center" style="width: 150px; height: 150px; background: #6c757d; color: white; font-size: 3rem; font-weight: bold;">
+                                            <%= portfolioUser.fullName.charAt(0).toUpperCase() %>
+                                        </div>
+                                    <% } %>
+                                    <% if (portfolioUser.profilePic && portfolioUser.profilePic !== '/images/default-avatar.svg') { %> 
+                                             alt="<%= portfolioUser.fullName %>" 
+                                             class="rounded-circle border border-4 border-white shadow" 
+                                             style="width: 150px; height: 150px; object-fit: cover;">
+                                    <% } %>
+                                </div>
+                                <div class="col-md-9">
+                                    <h1 class="display-5 fw-bold mb-2"><%= portfolioUser.fullName %></h1>
+                                    <p class="lead mb-3 opacity-90">@<%= portfolioUser.username %></p>
+                                    <% if (portfolioUser.bio) { %>
+                                        <p class="mb-4 opacity-90" style="font-size: 1.1rem;"><%= portfolioUser.bio %></p>
+                                    <% } %>
+                    
+                                    <!-- Contact Info -->
+                                    <div class="d-flex flex-wrap gap-4 mb-3">
+                                        <% if (portfolioUser.email) { %>
+                                            <a href="mailto:<%= portfolioUser.email %>" class="text-white text-decoration-none d-flex align-items-center">
+                                                <i class="bi bi-envelope-fill me-2"></i><%= portfolioUser.email %>
+                                            </a>
+                                        <% } %>
+                                        <% if (portfolioUser.phone) { %>
+                                            <span class="text-white d-flex align-items-center">
+                                                <i class="bi bi-telephone-fill me-2"></i><%= portfolioUser.phone %>
+                                            </span>
+                                        <% } %>
+                                        <% if (portfolioUser.address) { %>
+                                            <span class="text-white d-flex align-items-center">
+                                                <i class="bi bi-geo-alt-fill me-2"></i><%= portfolioUser.address %>
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <!-- Social Links & Actions -->
+                                    <div class="d-flex flex-wrap gap-3 align-items-center">
+                                        <% if (portfolioUser.linkedin) { %>
+                                            <a href="<%= portfolioUser.linkedin %>" target="_blank" class="btn btn-outline-light btn-sm" style="border-radius: 25px;">
+                                                <i class="bi bi-linkedin me-1"></i> LinkedIn
+                                            </a>
+                                        <% } %>
+                                        <% if (portfolioUser.github) { %>
+                                            <a href="<%= portfolioUser.github %>" target="_blank" class="btn btn-outline-light btn-sm" style="border-radius: 25px;">
+                                                <i class="bi bi-github me-1"></i> GitHub
+                                            </a>
+                                        <% } %>
+                                        <% if (isOwner) { %>
+                                            <a href="/dashboard" class="btn btn-light btn-sm" style="border-radius: 25px; color: #0d6efd; font-weight: 600;">
+                                                <i class="bi bi-pencil me-1"></i>Edit Portfolio
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Content -->
+                        <div class="p-5">
+        <!-- Skills Section -->
+        <% if (Object.keys(skills).length > 0) { %>
+            <section class="mb-5">
+                <h2 class="fw-bold mb-4"><i class="bi bi-gear me-2 text-primary"></i>Skills & Expertise</h2>
+                <% Object.keys(skills).forEach(category => { %>
+                    <div class="mb-4">
+                        <h5 class="fw-semibold text-muted mb-3"><%= category %></h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <% skills[category].forEach(skill => { %>
+                                <span class="badge bg-primary fs-6 px-3 py-2">
+                                    <%= skill.name %>
+                                    <small class="opacity-75">(<%= skill.proficiency %>)</small>
+                                </span>
+                            <% }) %>
+                        </div>
+                    </div>
+                <% }) %>
+            </section>
+        <% } %>
+
+        <!-- Projects Section -->
+        <% if (projects.length > 0) { %>
+            <section class="mb-5">
+                <h2 class="fw-bold mb-4"><i class="bi bi-code-square me-2 text-primary"></i>Featured Projects</h2>
+                <div class="row g-4">
+                    <% projects.forEach(project => { %>
+                        <div class="col-lg-6">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <h5 class="fw-bold mb-3"><%= project.title %></h5>
+                                    <p class="text-muted mb-3"><%= project.description %></p>
+                                    
+                                    <!-- Technologies -->
+                                    <div class="mb-3">
+                                        <% project.technologies.forEach(tech => { %>
+                                            <span class="badge bg-light text-dark me-1 mb-1"><%= tech %></span>
+                                        <% }) %>
+                                    </div>
+                                    
+                                    <!-- Project Links -->
+                                    <div class="d-flex gap-2">
+                                        <% if (project.githubUrl) { %>
+                                            <a href="<%= project.githubUrl %>" target="_blank" class="btn btn-outline-dark btn-sm">
+                                                <i class="bi bi-github me-1"></i>Code
+                                            </a>
+                                        <% } %>
+                                        <% if (project.liveUrl) { %>
+                                            <a href="<%= project.liveUrl %>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                <i class="bi bi-box-arrow-up-right me-1"></i>Live Demo
+                                            </a>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </section>
+        <% } %>
+
+        <!-- Experience & Education Row -->
+        <div class="row g-5">
+            <!-- Experience Section -->
+            <% if (experience.length > 0) { %>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-4"><i class="bi bi-briefcase me-2 text-primary"></i>Experience</h2>
+                    <div class="timeline">
+                        <% experience.forEach((exp, index) => { %>
+                            <div class="timeline-item <%= index === experience.length - 1 ? 'timeline-item-last' : '' %>">
+                                <div class="timeline-marker"></div>
+                                <div class="timeline-content">
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body p-4">
+                                            <h5 class="fw-bold mb-1"><%= exp.position %></h5>
+                                            <h6 class="text-primary mb-2"><%= exp.company %></h6>
+                                            <p class="text-muted small mb-2">
+                                                <i class="bi bi-calendar me-1"></i>
+                                                <%= new Date(exp.startDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) %> - 
+                                                <%= exp.current ? 'Present' : new Date(exp.endDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) %>
+                                                <% if (exp.location) { %>
+                                                    | <i class="bi bi-geo-alt me-1"></i><%= exp.location %>
+                                                <% } %>
+                                            </p>
+                                            <% if (exp.description) { %>
+                                                <p class="mb-2"><%= exp.description %></p>
+                                            <% } %>
+                                            <% if (exp.responsibilities && exp.responsibilities.length > 0) { %>
+                                                <ul class="list-unstyled mb-0">
+                                                    <% exp.responsibilities.forEach(responsibility => { %>
+                                                        <li class="mb-1"><i class="bi bi-check-circle text-success me-2"></i><%= responsibility %></li>
+                                                    <% }) %>
+                                                </ul>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Education Section -->
+            <% if (education.length > 0) { %>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-4"><i class="bi bi-mortarboard me-2 text-primary"></i>Education</h2>
+                    <% education.forEach(edu => { %>
+                        <div class="card border-0 shadow-sm mb-3">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-1"><%= edu.degree %></h5>
+                                <h6 class="text-primary mb-2"><%= edu.institution %></h6>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    <%= edu.startYear %> - <%= edu.endYear || 'Present' %>
+                                    <% if (edu.grade) { %>
+                                        | <i class="bi bi-award me-1"></i><%= edu.grade %>
+                                    <% } %>
+                                </p>
+                                <% if (edu.fieldOfStudy) { %>
+                                    <p class="mb-2"><strong>Field:</strong> <%= edu.fieldOfStudy %></p>
+                                <% } %>
+                                <% if (edu.description) { %>
+                                    <p class="text-muted mb-0"><%= edu.description %></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-item-last {
+    margin-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #0d6efd;
+    border: 3px solid #fff;
+    box-shadow: 0 0 0 3px #dee2e6;
+}
+
+.timeline-content {
+    margin-left: 20px;
+}
+
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 20px;
+    }
+    
+    .timeline-marker {
+        left: -17px;
+    }
+    
+    .timeline-content {
+        margin-left: 10px;
+    }
+}
+</style>
+
+<%- include('../partials/footer') %>

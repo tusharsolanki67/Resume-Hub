@@ -1,0 +1,24 @@
+<%- include('partials/header', { title: 'Page Not Found - PortfolioHub', user: user }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 text-center">
+            <div class="py-5">
+                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 5rem;"></i>
+                <h1 class="display-4 fw-bold mt-4">404</h1>
+                <h2 class="fw-bold mb-3">Page Not Found</h2>
+                <p class="text-muted mb-4">The page you're looking for doesn't exist or has been moved.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="/" class="btn btn-primary">
+                        <i class="bi bi-house me-2"></i>Go Home
+                    </a>
+                    <a href="/resume/users" class="btn btn-outline-primary">
+                        <i class="bi bi-people me-2"></i>Browse Portfolios
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

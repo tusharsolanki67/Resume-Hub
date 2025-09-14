@@ -1,0 +1,110 @@
+<%- include('../partials/header', { title: 'Browse Resumes - ResumeHub' }) %>
+
+<div class="container py-4" style="margin-top: 76px;">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold mb-3">Browse Professional Resumes</h1>
+            <p class="text-muted">Discover talented professionals and their amazing work</p>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mx-auto">
+            <form action="/resume/users" method="GET">
+                <div class="input-group input-group-lg">
+                    <input type="text" class="form-control" name="search" 
+                           placeholder="Search by name or skills..." 
+                           value="<%= search %>">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="row">
+        <% if (users.length === 0) { %>
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">No resumes found</h4>
+                <p class="text-muted">Try adjusting your search terms</p>
+            </div>
+        <% } else { %>
+            <div class="col-12 mb-3">
+                <p class="text-muted">
+                    Found <%= users.length %> resume<%= users.length !== 1 ? 's' : '' %>
+                    <% if (search) { %>
+                        for "<strong><%= search %></strong>"
+                    <% } %>
+                </p>
+            </div>
+            
+            <% users.forEach(portfolioUser => { %>
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0 portfolio-card">
+                        <div class="card-body p-4 text-center">
+                            <!-- Profile Picture -->
+                            <div class="mb-3">
+                                <% if (portfolioUser.profilePic && portfolioUser.profilePic !== '/images/default-avatar.svg') { %>
+                                    <img src="<%= portfolioUser.profilePic %>" 
+                                         alt="<%= portfolioUser.fullName %>" 
+                                         class="rounded-circle border" 
+                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                <% } else { %>
+                                    <div class="rounded-circle border d-flex align-items-center justify-content-center mx-auto" 
+                                         style="width: 80px; height: 80px; background: #6c757d; color: white; font-size: 1.5rem; font-weight: bold;">
+                                        <%= portfolioUser.fullName.charAt(0).toUpperCase() %>
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <!-- User Info -->
+                            <h5 class="fw-bold mb-1"><%= portfolioUser.fullName %></h5>
+                            <p class="text-primary mb-2">@<%= portfolioUser.username %></p>
+                            
+                            <% if (portfolioUser.bio) { %>
+                                <p class="text-muted small mb-3">
+                                    <%= portfolioUser.bio.length > 100 ? portfolioUser.bio.substring(0, 100) + '...' : portfolioUser.bio %>
+                                </p>
+                            <% } else { %>
+                                <p class="text-muted small mb-3">Professional resume</p>
+                            <% } %>
+                            
+                            <!-- View Portfolio Button -->
+                            <a href="/resume/<%= portfolioUser.username %>" 
+                               class="btn btn-primary btn-sm px-4">
+                                <i class="bi bi-eye me-2"></i>View Resume
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <!-- Pagination placeholder for future enhancement -->
+    <% if (users.length >= 20) { %>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <p class="text-muted">Showing first 20 results. Use search to find specific resumes.</p>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<style>
+.portfolio-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+</style>
+
+<%- include('../partials/footer') %>

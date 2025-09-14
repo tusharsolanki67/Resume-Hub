@@ -1,0 +1,114 @@
+<%- include('partials/header', { title: 'ResumeHub - Professional Resume Platform' }) %>
+
+<!-- Hero Section -->
+<section class="py-5" style="margin-top: 76px; background: #f8f9fa;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%); border-radius: 20px; padding: 60px 40px;">
+                    <div class="text-center text-white">
+                        <div class="mb-4">
+                            <i class="bi bi-person-workspace" style="font-size: 4rem; color: rgba(255,255,255,0.9);"></i>
+                        </div>
+                        <h1 class="display-4 fw-bold mb-4">Build Your Professional Resume</h1>
+                        <p class="lead mb-4" style="opacity: 0.9;">Create stunning resumes that showcase your skills, experience, and projects. Stand out from the crowd with our professional platform.</p>
+                        
+                        <% if (!user) { %>
+                            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                                <a href="/register" class="btn btn-light btn-lg px-5" style="border-radius: 50px; color: #212529; font-weight: 600;">
+                                    <i class="bi bi-person-plus me-2"></i>Get Started
+                                </a>
+                                <a href="/login" class="btn btn-outline-light btn-lg px-5" style="border-radius: 50px; color: #ffffff; font-weight: 600;">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                </a>
+                            </div>
+                        <% } else { %>
+                            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                                <a href="/dashboard" class="btn btn-light btn-lg px-5" style="border-radius: 50px; color: #212529; font-weight: 600;">
+                                    <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+                                </a>
+                                <a href="/resume/<%= user.username %>" class="btn btn-outline-light btn-lg px-5" style="border-radius: 50px; color: #ffffff; font-weight: 600;">
+                                    <i class="bi bi-eye me-2"></i>View My Resume
+                                </a>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Why Choose ResumeHub?</h2>
+                <p class="text-muted">Everything you need to create a professional online presence</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-palette fs-4"></i>
+                        </div>
+                        <h5 class="fw-bold">Professional Design</h5>
+                        <p class="text-muted">Beautiful, responsive templates that look great on any device</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-gear fs-4"></i>
+                        </div>
+                        <h5 class="fw-bold">Easy Management</h5>
+                        <p class="text-muted">Simple dashboard to manage your skills, projects, and experience</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="feature-icon bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <i class="bi bi-share fs-4"></i>
+                        </div>
+                        <h5 class="fw-bold">Share Anywhere</h5>
+                        <p class="text-muted">Get a unique URL to share your resume with employers and clients</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <h3 class="fw-bold mb-3">Ready to Get Started?</h3>
+                <p class="text-muted mb-4">Join thousands of professionals who trust ResumeHub for their online resumes</p>
+                
+                <% if (!user) { %>
+                    <a href="/register" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-rocket me-2"></i>Create Your Resume
+                    </a>
+                <% } else { %>
+                    <a href="/resume/users" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-people me-2"></i>Browse Other Resumes
+                    </a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%- include('partials/footer') %>
