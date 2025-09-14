@@ -54,9 +54,9 @@ app.use(session({
   }),
   cookie: { 
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    secure: false, // Allow HTTP for now
     httpOnly: true, // Prevent XSS
-    sameSite: 'strict' // CSRF protection
+    sameSite: 'lax' // Less strict for deployment
   },
   name: 'resume.sid' // Custom session name
 }));
