@@ -149,22 +149,7 @@ function editExperience(id, element) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Dropdown menu
-    const userMenuBtn = document.getElementById('userMenuBtn');
-    const userMenu = document.getElementById('userMenu');
-    
-    if (userMenuBtn && userMenu) {
-        userMenuBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            userMenu.style.display = userMenu.style.display === 'none' ? 'block' : 'none';
-        });
-        
-        document.addEventListener('click', function(event) {
-            if (!userMenuBtn.contains(event.target) && !userMenu.contains(event.target)) {
-                userMenu.style.display = 'none';
-            }
-        });
-    }
+    // Mobile menu handling is now done by Bootstrap
     
     // Form submissions
     const forms = [

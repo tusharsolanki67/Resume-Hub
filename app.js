@@ -12,6 +12,9 @@ const path = require('path');
 
 const app = express();
 
+// Trust proxy for Render
+app.set('trust proxy', 1);
+
 // Production security check
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
   console.error('❌ SESSION_SECRET environment variable is required in production!');
@@ -53,15 +56,17 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/resume_platform'
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/resume_platform',
+    touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: { 
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: false, // Allow HTTP for now
+    secure: process.env.NODE_ENV === 'production', // HTTPS in production
     httpOnly: true, // Prevent XSS
-    sameSite: 'lax' // Less strict for deployment
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Cross-site for production
   },
-  name: 'resume.sid' // Custom session name
+  name: 'resume.sid', // Custom session name
+  proxy: true // Trust proxy for Render
 }));
 
 // View engine
