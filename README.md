@@ -56,7 +56,7 @@ A comprehensive multi-user professional resume platform built with Node.js, Expr
 
 1. **Clone and Navigate**
    ```bash
-   cd PROJECT2
+   cd Resume-Hub
    ```
 
 2. **Install Dependencies**
@@ -196,7 +196,3 @@ All models reference User and include:
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
-
-## License
-
-This project is licensed under the ISC License.
