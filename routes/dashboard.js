@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const User = require('../models/User');
 const Skill = require('../models/Skill');
 const Education = require('../models/Education');
@@ -9,26 +10,26 @@ const Experience = require('../models/Experience');
 const { requireAuth } = require('../middleware/auth');
 const router = express.Router();
 
-// Multer configuration for file uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'public/uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname));
+// Cloudinary configuration
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Cloudinary storage configuration
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'resumehub-profiles',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    transformation: [{ width: 400, height: 400, crop: 'fill' }]
   }
 });
 
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  }
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
 // Dashboard home
@@ -79,7 +80,7 @@ router.post('/profile', requireAuth, upload.single('profilePic'), async (req, re
     };
     
     if (req.file) {
-      updateData.profilePic = '/uploads/' + req.file.filename;
+      updateData.profilePic = req.file.path; // Cloudinary URL
     }
 
     await User.findByIdAndUpdate(userId, updateData);

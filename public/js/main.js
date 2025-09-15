@@ -149,7 +149,26 @@ function editExperience(id, element) {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Mobile menu handling is now done by Bootstrap
+    // Ensure Bootstrap is loaded and dropdown works
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fallback for dropdown if Bootstrap fails
+        const dropdownToggle = document.getElementById('navbarDropdown');
+        const dropdownMenu = dropdownToggle?.nextElementSibling;
+        
+        if (dropdownToggle && dropdownMenu) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            });
+        }
+    });
     
     // Form submissions
     const forms = [
@@ -195,4 +214,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Ensure modals work
+    if (typeof bootstrap !== 'undefined') {
+        console.log('✅ Bootstrap loaded successfully');
+    } else {
+        console.error('❌ Bootstrap not loaded - modals may not work');
+    }
 });
