@@ -35,7 +35,7 @@
                             <a href="/dashboard" class="btn btn-secondary">
                                 <i class="bi bi-arrow-left me-2"></i>Cancel
                             </a>
-                            <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                            <button type="submit" class="btn btn-secondary" id="deleteBtn" disabled>
                                 <i class="bi bi-trash me-2"></i>Delete My Account
                             </button>
                         </div>
@@ -120,9 +120,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('deleteAccountForm');
     
     // Enable button only when username is typed correctly
-    const requiredUsername = '<%= user.username %>';
+    const requiredUsername = "<%= user.username %>";
+    
     confirmText.addEventListener('input', function() {
-        deleteBtn.disabled = this.value !== requiredUsername;
+        if (this.value === requiredUsername) {
+            deleteBtn.disabled = false;
+            deleteBtn.className = 'btn btn-danger';
+        } else {
+            deleteBtn.disabled = true;
+            deleteBtn.className = 'btn btn-secondary';
+        }
     });
     
     // Handle form submission
@@ -143,25 +150,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({})
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Server error');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(result => {
-                // Always redirect since user is deleted even if response has issues
-                showToast('Account deleted successfully!', 'success');
-                setTimeout(() => {
-                    window.location.replace('/');
-                }, 1000);
+                if (result.success) {
+                    showToast('Account deleted successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.replace('/');
+                    }, 1000);
+                } else {
+                    showToast('Error: ' + (result.error || 'Failed to delete account'), 'error');
+                    deleteBtn.disabled = false;
+                    deleteBtn.innerHTML = '<i class="bi bi-trash me-2"></i>Delete My Account';
+                }
             })
             .catch(error => {
-                // Even on error, redirect since deletion likely succeeded
-                showToast('Account deleted!', 'success');
-                setTimeout(() => {
-                    window.location.replace('/');
-                }, 1000);
+                console.error('Delete error:', error);
+                showToast('Network error. Please try again.', 'error');
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = '<i class="bi bi-trash me-2"></i>Delete My Account';
             });
         }
     });

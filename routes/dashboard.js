@@ -103,14 +103,19 @@ router.get('/delete-account', requireAuth, (req, res) => {
 // Delete account
 router.post('/delete-account', requireAuth, async (req, res) => {
   try {
+    console.log('🗑️ Delete account request for user:', req.session.user.id);
+    
     const user = await User.findById(req.session.user.id);
     
     if (!user) {
+      console.log('❌ User not found:', req.session.user.id);
       return res.json({ success: false, error: 'User not found' });
     }
     
+    console.log('🗑️ Deleting user data for:', user.username);
+    
     // Delete all user data
-    await Promise.all([
+    const deleteResults = await Promise.all([
       User.findByIdAndDelete(user._id),
       Skill.deleteMany({ user: user._id }),
       Education.deleteMany({ user: user._id }),
@@ -118,14 +123,19 @@ router.post('/delete-account', requireAuth, async (req, res) => {
       Experience.deleteMany({ user: user._id })
     ]);
     
-    // Destroy session and redirect
+    console.log('✅ User data deleted:', deleteResults.map(r => r?.deletedCount || 1));
+    
+    // Destroy session
     req.session.destroy((err) => {
       if (err) {
+        console.log('❌ Session destroy error:', err);
         return res.json({ success: false, error: 'Session error' });
       }
+      console.log('✅ Session destroyed, account deleted successfully');
       res.json({ success: true });
     });
   } catch (error) {
+    console.error('❌ Delete account error:', error);
     res.json({ success: false, error: error.message });
   }
 });
